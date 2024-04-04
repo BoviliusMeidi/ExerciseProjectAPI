@@ -1,4 +1,5 @@
 const { User } = require('../../../models');
+const { password } = require('../../../models/users-schema');
 
 /**
  * Get a list of users
@@ -23,7 +24,16 @@ async function getUser(id) {
  * @returns {Promise}
  */
 async function getUserEmail(email) {
-  return User.find({email: email});
+  return User.findOne({email:email});
+}
+
+/**
+ * Get user detail(password)
+ * @param {string} password - User password
+ * @returns {Promise}
+ */
+async function getUserPassword(password) {
+  return User.find({password: password});
 }
 
 /**
@@ -75,6 +85,7 @@ module.exports = {
   getUsers,
   getUser,
   getUserEmail,
+  getUserPassword,
   createUser,
   updateUser,
   deleteUser,

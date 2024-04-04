@@ -42,10 +42,9 @@ async function getUser(id) {
   };
 }
 
-
 /**
- * Get user detail
- * @param {string} id - User ID
+ * Get user email detail
+ * @param {string} email - email
  * @returns {Object}
  */
 async function getCheckEmail(email) {
@@ -53,6 +52,22 @@ async function getCheckEmail(email) {
 
   // Email
   if (!checkEmail) {
+    return true;
+  }else{
+    return false;
+  }
+}
+
+/**
+ * Get user password detail
+ * @param {string} password - password
+ * @returns {Object}
+ */
+async function getCheckPassword(password) {
+  const checkPassword = await usersRepository.getUserPassword(password);
+
+  // Email
+  if (checkPassword) {
     return true;
   }else{
     return false;
@@ -129,6 +144,7 @@ module.exports = {
   getUsers,
   getUser,
   getCheckEmail,
+  getCheckPassword,
   createUser,
   updateUser,
   deleteUser,

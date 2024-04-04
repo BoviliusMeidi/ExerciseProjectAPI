@@ -1,5 +1,6 @@
 const usersRepository = require('./users-repository');
 const { hashPassword } = require('../../../utils/password');
+const { email } = require('../../../models/users-schema');
 
 /**
  * Get list of users
@@ -39,6 +40,23 @@ async function getUser(id) {
     name: user.name,
     email: user.email,
   };
+}
+
+
+/**
+ * Get user detail
+ * @param {string} id - User ID
+ * @returns {Object}
+ */
+async function getCheckEmail(email) {
+  const checkEmail = await usersRepository.getUserEmail(email);
+
+  // Email
+  if (!checkEmail) {
+    return true;
+  }else{
+    return false;
+  }
 }
 
 /**
@@ -110,6 +128,7 @@ async function deleteUser(id) {
 module.exports = {
   getUsers,
   getUser,
+  getCheckEmail,
   createUser,
   updateUser,
   deleteUser,

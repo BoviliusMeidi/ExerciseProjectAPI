@@ -54,14 +54,25 @@ async function createUser(request, response, next) {
     const checkEmail = await usersService.getCheckEmail(email);
 
     if (!checkEmail) {
-      throw errorResponder(errorTypes.EMAIL_ALREADY_TAKEN, 'Email already exist');
+      throw errorResponder(
+        errorTypes.EMAIL_ALREADY_TAKEN,
+        'Email already exist'
+      );
     }
 
-    if (password_confirm != password){
-      throw errorResponder(errorTypes.INVALID_PASSWORD, 'Invalid Password');
+    if (password_confirm != password) {
+      throw errorResponder(
+        errorTypes.INVALID_PASSWORD,
+        'Invalid Confirm Password'
+      );
     }
 
-    const success = await usersService.createUser(name, email, password, password_confirm);
+    const success = await usersService.createUser(
+      name,
+      email,
+      password,
+      password_confirm
+    );
     if (!success) {
       throw errorResponder(
         errorTypes.UNPROCESSABLE_ENTITY,
@@ -103,7 +114,7 @@ async function updateUser(request, response, next) {
 }
 
 /**
- * Handle update user request
+ * Handle update user password request
  * @param {object} request - Express request object
  * @param {object} response - Express response object
  * @param {object} next - Express route middlewares
@@ -115,14 +126,21 @@ async function updatePassword(request, response, next) {
     const old_password = request.body.old_password;
     const password = request.body.password;
     const password_confirm = request.body.password_confirm;
-    const checkPasswordOld = await usersService.getCheckPasswordOld(id, old_password);
+    const checkPasswordOld = await usersService.getCheckPasswordOld(
+      id,
+      old_password
+    );
+    console.log(checkPasswordOld);
 
     if (!checkPasswordOld) {
       throw errorResponder(errorTypes.INVALID_PASSWORD, 'Invalid Old Password');
     }
 
-    if (password_confirm != password){
-      throw errorResponder(errorTypes.INVALID_PASSWORD, 'Invalid Confirm Password');
+    if (password_confirm != password) {
+      throw errorResponder(
+        errorTypes.INVALID_PASSWORD,
+        'Invalid Confirm Password'
+      );
     }
 
     const success = await usersService.updatePassword(id, password);
@@ -133,7 +151,9 @@ async function updatePassword(request, response, next) {
       );
     }
 
-    return response.status(200).json({ id });
+    return response
+      .status(200)
+      .json({ id, message: 'Password Success Change' });
   } catch (error) {
     return next(error);
   }

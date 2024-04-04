@@ -1,0 +1,22 @@
+meta {
+  name: Prevent Duplicate Email 2
+  type: http
+  seq: 2
+}
+
+put {
+  url: http://localhost:5000/api/users/660e9a175f57cc20ed762b16
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGV4YW1wbGUuY29tIiwidXNlcklkIjoiNjYwY2I1MTQyZGJlNjdkOTk2NDg5OWEzIiwiaWF0IjoxNzEyMjMyNTE4LCJleHAiOjE3MTIzMTg5MTh9.-ky5mSCZyV2rC30kQCdLm-QAN5fJYmBvnC8UCnuZg8Q
+}
+
+body:json {
+  {
+    "name": "Bovilius Meidi",
+    "email": "BoviliusMeidi@example.com"
+  }
+}

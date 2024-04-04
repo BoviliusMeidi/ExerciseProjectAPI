@@ -1,6 +1,5 @@
 const usersRepository = require('./users-repository');
-const { hashPassword } = require('../../../utils/password');
-const { email, password } = require('../../../models/users-schema');
+const passwordBcrypt = require('../../../utils/password');
 
 /**
  * Get list of users
@@ -53,23 +52,30 @@ async function getCheckEmail(email) {
   // Email
   if (!checkEmail) {
     return true;
-  }else{
+  } else {
     return false;
   }
 }
 
 /**
  * Get user password detail
- * @param {string} old_password - password
+ * @param {string} oldpassword - password
  * @returns {Object}
  */
-async function getCheckPasswordOld(id, old_password) {
-  const checkPassword = await usersRepository.checkOldPassword(id, old_password);
-
-  // Password
-  if (checkPassword) {
-    return true;
-  }else{
+async function getCheckPasswordOld(id, oldPassword) {
+  const user = await usersRepository.getUser(id);
+  console.log(user);
+  if (user) {
+    const match = await passwordBcrypt.passwordMatched(
+      oldPassword,
+      user.password
+    );
+    if (match) {
+      return true;
+    } else {
+      return false;
+    }
+  } else {
     return false;
   }
 }
@@ -83,7 +89,7 @@ async function getCheckPasswordOld(id, old_password) {
  */
 async function createUser(name, email, password) {
   // Hash password
-  const hashedPassword = await hashPassword(password);
+  const hashedPassword = await passwordBcrypt.hashPassword(password);
 
   try {
     await usersRepository.createUser(name, email, hashedPassword);
@@ -119,21 +125,21 @@ async function updateUser(id, name, email) {
 }
 
 /**
- * Update existing user
+ * Update password user
  * @param {string} id - User ID
  * @param {string} password - Password
  * @returns {boolean}
  */
 async function updatePassword(id, password) {
   const user = await usersRepository.getUser(id);
-
+  const hashedPassword = await passwordBcrypt.hashPassword(password);
   // User not found
   if (!user) {
     return null;
   }
 
   try {
-    await usersRepository.updatePassword(id, password);
+    await usersRepository.updatePassword(id, hashedPassword);
   } catch (err) {
     return null;
   }

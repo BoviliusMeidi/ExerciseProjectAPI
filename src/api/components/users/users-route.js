@@ -32,6 +32,21 @@ module.exports = (app) => {
     usersControllers.updateUser
   );
 
+  // Get change password detail
+  route.post(
+    '/:id/change-password',
+    authenticationMiddleware,
+    usersControllers.updatePassword
+  );
+
+  // Update password
+  route.put(
+    ':/id/change-password',
+    authenticationMiddleware,
+    celebrate(usersValidator.updateUser),
+    usersControllers.updatePassword
+  );
+
   // Delete user
   route.delete('/:id', authenticationMiddleware, usersControllers.deleteUser);
 };

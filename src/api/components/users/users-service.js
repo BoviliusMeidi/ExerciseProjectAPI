@@ -1,6 +1,6 @@
 const usersRepository = require('./users-repository');
 const { hashPassword } = require('../../../utils/password');
-const { email } = require('../../../models/users-schema');
+const { email, password } = require('../../../models/users-schema');
 
 /**
  * Get list of users
@@ -60,13 +60,13 @@ async function getCheckEmail(email) {
 
 /**
  * Get user password detail
- * @param {string} password - password
+ * @param {string} old_password - password
  * @returns {Object}
  */
-async function getCheckPassword(password) {
-  const checkPassword = await usersRepository.getUserPassword(password);
+async function getCheckPasswordOld(id, old_password) {
+  const checkPassword = await usersRepository.checkOldPassword(id, old_password);
 
-  // Email
+  // Password
   if (checkPassword) {
     return true;
   }else{
@@ -119,6 +119,29 @@ async function updateUser(id, name, email) {
 }
 
 /**
+ * Update existing user
+ * @param {string} id - User ID
+ * @param {string} password - Password
+ * @returns {boolean}
+ */
+async function updatePassword(id, password) {
+  const user = await usersRepository.getUser(id);
+
+  // User not found
+  if (!user) {
+    return null;
+  }
+
+  try {
+    await usersRepository.updatePassword(id, password);
+  } catch (err) {
+    return null;
+  }
+
+  return true;
+}
+
+/**
  * Delete user
  * @param {string} id - User ID
  * @returns {boolean}
@@ -144,8 +167,9 @@ module.exports = {
   getUsers,
   getUser,
   getCheckEmail,
-  getCheckPassword,
+  getCheckPasswordOld,
   createUser,
   updateUser,
+  updatePassword,
   deleteUser,
 };

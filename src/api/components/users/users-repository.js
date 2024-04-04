@@ -24,17 +24,29 @@ async function getUser(id) {
  * @returns {Promise}
  */
 async function getUserEmail(email) {
-  return User.findOne({email:email});
+  return User.findOne({email: email});
 }
 
 /**
  * Get user detail(password)
- * @param {string} password - User password
+ * @param {string} oldpassword - User old password
  * @returns {Promise}
  */
-async function getUserPassword(password) {
-  return User.find({password: password});
+// Assuming bcrypt is used for hashing and you have a method to get the user by username
+async function checkOldPassword(id, oldPassword) {
+  const user = await User.findOne({ id: id });
+  if (user) {
+      const match = await bcrypt.compare(oldPassword, user.password);
+      if (match) {
+          return true;
+      } else {
+          return false;
+      }
+  } else {
+      return false;
+  }
 }
+
 
 /**
  * Create new user
@@ -73,6 +85,25 @@ async function updateUser(id, name, email) {
 }
 
 /**
+ * Update existing user
+ * @param {string} id - User ID
+ * @param {string} password - Password
+ * @returns {Promise}
+ */
+async function updatePassword(id, password) {
+  return User.updateOne(
+    {
+      _id: id,
+    },
+    {
+      $set: {
+        password,
+      },
+    }
+  );
+}
+
+/**
  * Delete a user
  * @param {string} id - User ID
  * @returns {Promise}
@@ -85,8 +116,9 @@ module.exports = {
   getUsers,
   getUser,
   getUserEmail,
-  getUserPassword,
+  checkOldPassword,
   createUser,
   updateUser,
+  updatePassword,
   deleteUser,
 };

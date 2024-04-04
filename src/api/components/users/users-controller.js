@@ -52,13 +52,12 @@ async function createUser(request, response, next) {
     const password = request.body.password;
     const password_confirm = request.body.password_confirm;
     const checkEmail = await usersService.getCheckEmail(email);
-    const checkPassword = await usersService.getCheckPassword(password);
 
     if (!checkEmail) {
       throw errorResponder(errorTypes.EMAIL_ALREADY_TAKEN, 'Email already exist');
     }
 
-    if (!checkPassword) {
+    if (password_confirm != password){
       throw errorResponder(errorTypes.INVALID_PASSWORD, 'Invalid Password');
     }
 
@@ -104,6 +103,43 @@ async function updateUser(request, response, next) {
 }
 
 /**
+ * Handle update user request
+ * @param {object} request - Express request object
+ * @param {object} response - Express response object
+ * @param {object} next - Express route middlewares
+ * @returns {object} Response object or pass an error to the next route
+ */
+async function updatePassword(request, response, next) {
+  try {
+    const id = request.params.id;
+    const old_password = request.body.old_password;
+    const password = request.body.password;
+    const password_confirm = request.body.password_confirm;
+    const checkPasswordOld = await usersService.getCheckPasswordOld(id, old_password);
+
+    if (!checkPasswordOld) {
+      throw errorResponder(errorTypes.INVALID_PASSWORD, 'Invalid Old Password');
+    }
+
+    if (password_confirm != password){
+      throw errorResponder(errorTypes.INVALID_PASSWORD, 'Invalid Confirm Password');
+    }
+
+    const success = await usersService.updatePassword(id, password);
+    if (!success) {
+      throw errorResponder(
+        errorTypes.WRONG_RESET_PASSWORD_TOKEN,
+        'Invalid update password'
+      );
+    }
+
+    return response.status(200).json({ id });
+  } catch (error) {
+    return next(error);
+  }
+}
+
+/**
  * Handle delete user request
  * @param {object} request - Express request object
  * @param {object} response - Express response object
@@ -133,5 +169,6 @@ module.exports = {
   getUser,
   createUser,
   updateUser,
+  updatePassword,
   deleteUser,
 };

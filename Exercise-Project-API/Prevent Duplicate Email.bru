@@ -4,8 +4,21 @@ meta {
   seq: 1
 }
 
-get {
+post {
   url: http://localhost:5000/api/users
-  body: none
+  body: json
   auth: none
+}
+
+headers {
+  Authorization: JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGV4YW1wbGUuY29tIiwidXNlcklkIjoiNjYwY2I1MTQyZGJlNjdkOTk2NDg5OWEzIiwiaWF0IjoxNzEyMTk0MjEwLCJleHAiOjE3MTIyODA2MTB9.XTwB9LjMIp0re0Zw2eyXnXcj_-PKo704Gu4iVRf6ZMg
+}
+
+body:json {
+  {
+    "name": "Bovi",
+    "email": "admin@example.com",
+    "password": "123456"
+  }
+  
 }

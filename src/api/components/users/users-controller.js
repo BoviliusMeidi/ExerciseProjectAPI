@@ -130,7 +130,6 @@ async function updatePassword(request, response, next) {
       id,
       old_password
     );
-    console.log(checkPasswordOld);
 
     if (!checkPasswordOld) {
       throw errorResponder(errorTypes.INVALID_PASSWORD, 'Invalid Old Password');

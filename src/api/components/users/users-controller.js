@@ -48,7 +48,8 @@ async function getUser(request, response, next) {
 async function createUser(request, response, next) {
   try {
     const name = request.body.name;
-    const email = request.body.email;
+    const emailBefore = request.body.email;
+    const email = emailBefore.toLowerCase();
     const password = request.body.password;
     const password_confirm = request.body.password_confirm;
     const checkEmail = await usersService.getCheckEmail(email);
@@ -97,7 +98,16 @@ async function updateUser(request, response, next) {
   try {
     const id = request.params.id;
     const name = request.body.name;
-    const email = request.body.email;
+    const emailBefore = request.body.email;
+    const email = emailBefore.toLowerCase();
+    const checkEmail = await usersService.getCheckEmail(email);
+
+    if (!checkEmail) {
+      throw errorResponder(
+        errorTypes.EMAIL_ALREADY_TAKEN,
+        'Email already exist'
+      );
+    }
 
     const success = await usersService.updateUser(id, name, email);
     if (!success) {
